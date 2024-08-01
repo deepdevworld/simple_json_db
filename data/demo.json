@@ -1,0 +1,23 @@
+{
+    "count": [
+        {
+            "id": "user",
+            "count": 2
+        },
+        {
+            "id": "location",
+            "count": 0
+        }
+    ],
+    "user": [
+        {
+            "name": "sushil",
+            "id": 0
+        },
+        {
+            "name": "sushil",
+            "id": 1
+        }
+    ],
+    "location": []
+}

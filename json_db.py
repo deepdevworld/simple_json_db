@@ -2,13 +2,13 @@ from __future__ import annotations
 
 import os
 import json
-from .db import DB
+from db import DB
 from typing import List
 
 
 
 
-class MatrixDB(DB):
+class JsonDB(DB):
 
     def __init__(self, db_name: str, tables: List[str] = None):
         self.tables = tables
@@ -19,21 +19,23 @@ class MatrixDB(DB):
 
     def save(self):
         with open(file=self.file_path, mode="w") as f:
+            print("self.db", self.db)
             json.dump(self.db, f, indent=4)
         return True
     def get_path(self):
-        return os.path.join(os.path.dirname(os.path.dirname(__file__)), 'data', self.db_name)
+        path = os.getcwd()
+        return os.path.join(path, 'data', self.db_name)
     def load_db(self):
-        if self.tables:
-            self.db = {self.add_table(table) for table in self.tables}
-
         if not os.path.exists(self.file_path):
+            print("creating file")
             with open(file=self.file_path, mode="w+") as f:
                 json.dump(self.db, f, indent=4)
         else:
             with open(self.file_path, 'r+') as file:
                 self.db = json.load(file)
-
+        if self.tables:
+            for table in self.tables:
+                self.add_table(table)
         self.save()
         return
 
@@ -54,6 +56,9 @@ class MatrixDB(DB):
     def increase_counter(self, table_name: str):
         count = self.get_count(table_name)
         return self.update_by_query("count", {"id": table_name}, {"count": count + 1})
+    def decrease_counter(self, table_name: str):
+        count = self.get_count(table_name)
+        return self.update_by_query("count", {"id": table_name}, {"count": count - 1})
 
     def get_id(self, table_name):
         return self.get_count(table_name) + 1
@@ -67,6 +72,7 @@ class MatrixDB(DB):
 
     def _duplicate_check(self, table_name: str, data: dict):
         for pre_exist_data in self.db[table_name]:
+            print(pre_exist_data)
             if data["id"] == pre_exist_data.get("id"):
                 print(f"data already exist in table: {table_name} for the id: {data['id']}")
                 return True
@@ -75,8 +81,10 @@ class MatrixDB(DB):
     def add(self, table_name: str, data: dict):
         if not self._table_exists(table_name):
             return False
-        if self._duplicate_check(table_name, data):
-            return False
+        # if self._duplicate_check(table_name, data):
+        #     return False
+        id = self.get_count(table_name)
+        data.update({"id": id})
         self.db[table_name].append(data)
         self.increase_counter(table_name)
         self.save()
@@ -87,8 +95,8 @@ class MatrixDB(DB):
         if not self._table_exists(table_name):
             return False
         for data in data_list:
-            if self._duplicate_check(table_name, data):
-                return False
+            # if self._duplicate_check(table_name, data):
+            #     return False
             self.db[table_name].append(data)
             self.increase_counter(table_name)
             self.save()
@@ -167,6 +175,7 @@ class MatrixDB(DB):
         for i, data in enumerate(self.db[table_name]):
             if data.get("id") == pk:
                 self.db[table_name].pop(i)
+                self.decrease_counter(table_name=table_name)
                 self.save()
                 return True
         return False
