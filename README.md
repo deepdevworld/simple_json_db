@@ -39,17 +39,18 @@ db.add(table_name="user", data_list=[{"name": "alex"}, {"name": "bixby"}])
 db.get_all(table_name="user") 
 ```
 
-## Get Table Data
-
-```.py 
-db.get_all(table_name="user") 
-```
-
 ## Get Data By Id
 
 ```.py 
 db.get_by_id(table_name="user", pk=1)
 ```
+
+## Get Table Data By Query
+
+```.py 
+db.get_by_query(table_name="user", query={"name": "alex"}) 
+```
+
 
 
 
