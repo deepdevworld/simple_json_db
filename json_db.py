@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import os
 import json
-from db import DB
 from typing import List
+from .db import DB
 
 
 
@@ -22,7 +22,7 @@ class JsonDB(DB):
             json.dump(self.db, f, indent=4)
         return True
     def get_path(self):
-        path = os.getcwd()
+        path = os.path.dirname(os.path.abspath(__file__))
         return os.path.join(path, 'data', self.db_name)
     def load_db(self):
         if not os.path.exists(self.file_path):
@@ -61,9 +61,9 @@ class JsonDB(DB):
     def get_id(self, table_name):
         return self.get_count(table_name) + 1
 
-    def _table_exists(self, table_name: str):
+    def _table_exists(self, table_name: str, show_message: bool = True):
         if table_name not in self.db:
-            print(f"invalid table: {table_name}")
+            if show_message: print(f"invalid table: {table_name}")
             return False
         return True
 
@@ -106,7 +106,7 @@ class JsonDB(DB):
         return self.db[table_name]
 
     def add_table(self, table_name: str):
-        if self._table_exists(table_name):
+        if self._table_exists(table_name, show_message=False):
             print(f"table: {table_name} already exist...")
             return False
         self.db[table_name] = []
