@@ -12,14 +12,13 @@ class JsonDB(DB):
 
     def __init__(self, db_name: str, tables: List[str] = None):
         self.tables = tables
-        self.db: dict = {"count": []}
+        self.db: dict = {"count": [], "id_track": []}
         self.db_name = db_name
         self.file_path = self.get_path()
         self.load_db()
 
     def save(self):
         with open(file=self.file_path, mode="w") as f:
-            print("self.db", self.db)
             json.dump(self.db, f, indent=4)
         return True
     def get_path(self):
@@ -27,7 +26,6 @@ class JsonDB(DB):
         return os.path.join(path, 'data', self.db_name)
     def load_db(self):
         if not os.path.exists(self.file_path):
-            print("creating file")
             with open(file=self.file_path, mode="w+") as f:
                 json.dump(self.db, f, indent=4)
         else:
@@ -175,7 +173,7 @@ class JsonDB(DB):
         for i, data in enumerate(self.db[table_name]):
             if data.get("id") == pk:
                 self.db[table_name].pop(i)
-                self.decrease_counter(table_name=table_name)
+                # self.decrease_counter(table_name=table_name)
                 self.save()
                 return True
         return False

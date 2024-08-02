@@ -2,22 +2,14 @@
     "count": [
         {
             "id": "user",
-            "count": 2
-        },
-        {
-            "id": "location",
-            "count": 0
+            "count": 1
         }
     ],
+    "id_track": [],
     "user": [
         {
-            "name": "sushil",
+            "name": "rai",
             "id": 0
-        },
-        {
-            "name": "sushil",
-            "id": 1
         }
-    ],
-    "location": []
+    ]
 }
